@@ -19,9 +19,9 @@ return new class extends Migration
             $table->string("title");
             $table->string("subtitle");
             $table->text("content");
-            $table->boolean("expirable");
-            $table->boolean("commentable");
-            $table->boolean("private");
+            $table->boolean("expirable")->default(false);
+            $table->boolean("commentable")->default(true);
+            $table->boolean("private")->default(false);
             $table->timestamps();
         });
     }
