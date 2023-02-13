@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DestroyPostRequest;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
@@ -34,7 +35,7 @@ class PostController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \App\Http\Requests\StorePostRequest  $request
-     * @return
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(StorePostRequest $request)
     {
@@ -44,14 +45,14 @@ class PostController extends Controller
         $post->title = $validated['title'];
         $post->subtitle = $validated['subtitle'];
         $post->content = $validated['content'];
-        $post->expirable = $validated['expirable'];
-        $post->commentable = $validated['commentable'];
+        $post->expirable = $validated['expirable'] ?? "" == "on";
+        $post->commentable = $validated['commentable'] ?? "" == "on";
         $post->private = $validated['access'] == 'private';
         $post->user_id = $request->user()->id;
         $post->save();
 
         // response 201 Created
-        return redirect('/post');
+        return redirect()->route('post.show', $post->id);
     }
 
     /**
@@ -85,7 +86,7 @@ class PostController extends Controller
      *
      * @param  \App\Http\Requests\UpdatePostRequest  $request
      * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function update(UpdatePostRequest $request, Post $post)
     {
@@ -94,26 +95,29 @@ class PostController extends Controller
         $post->title = $validated['title'];
         $post->subtitle = $validated['subtitle'];
         $post->content = $validated['content'];
-        $post->expirable = $validated['expirable'];
-        $post->commentable = $validated['commentable'];
-        $post->private = $validated['private'];
+        $post->expirable = $validated['expirable'] ?? "" == "on";
+        $post->commentable = $validated['commentable'] ?? "" == "on";
+        $post->private = $validated['access'] == 'private';
         $post->save();
 
-        // response 204 No Content
-        return redirect('/post');
+        // response 200 OK
+        return view('posts.show', [
+            'post' => $post,
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
      *
+     * @param  \App\Http\Requests\DestroyPostRequest  $request
      * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(Post $post)
+    public function destroy(DestroyPostRequest $request, Post $post)
     {
-        $post->delete();
-
-        // response 204 No Content
-        return redirect('/post');
+        if ($request->authorize()) {
+            $post->delete();
+        }
+        return redirect()->route('post.index')->with('status', __('post.deleted'));
     }
 }

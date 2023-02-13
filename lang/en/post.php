@@ -18,4 +18,8 @@ return [
     'access' => 'Access',
     'public' => 'Public',
     'private' => 'Private',
+    'modify' => 'Edit',
+    'delete' => 'Delete',
+    'update' => 'Update',
+    'deleted' => 'Post deleted successfully',
 ];

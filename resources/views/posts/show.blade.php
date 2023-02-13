@@ -16,6 +16,20 @@
                             {{ __('post.written_by') }} <span class="font-medium">{{ $post->user->name }}</span> {{ __('post.written_on') }} <span class="font-medium">{{ $post->created_at }}</span>
                         </div>
                         <p>{{ $post->content }}</p>
+
+                        @if($post->user_id == Auth::user()->id)
+                        <div class="flex mt-4">
+                            <a href="{{ route('post.edit', $post->id) }}" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded mr-2">{{ trans('post.modify')  }}</a>
+                            <a href="#"
+                               onclick="event.preventDefault();document.getElementById('delete-form-{{$post->id}}').submit();"
+                               class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">{{ trans('post.delete') }}</a>
+                        </div>
+
+                        <form id="delete-form-{{$post->id}}" action="{{route('post.destroy', $post->id)}}" method="POST" style="display: none;">
+                            @csrf
+                            @method('DELETE')
+                        </form>
+                        @endif
                     </div>
                 </div>
             </div>
