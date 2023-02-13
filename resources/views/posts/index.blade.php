@@ -18,7 +18,7 @@
                     <div class="container mx-auto">
                         <div class="flex flex-col">
                         @foreach($posts as $post)
-                            <a class="bg-white border-b-2 border-gray-500 hover:border-gray-300 rounded-lg p-6 m-4" href="/post/{{ $post->id }}">
+                            <a class="bg-white border-b-2 border-gray-500 hover:border-gray-300 rounded-lg p-6 m-4" href="{{ route('post.show', $post->id) }}">
                                 <h2 class="text-lg font-medium mb-2">{{ $post->title }}</h2>
                                 <div class="text-gray-600">Por <span class="font-medium">{{ $post->user->name }}</span> - <span class="font-medium">{{ $post->created_at }}</span></div>
                             </a>
